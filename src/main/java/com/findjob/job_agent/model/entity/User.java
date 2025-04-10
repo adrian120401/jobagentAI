@@ -1,5 +1,6 @@
 package com.findjob.job_agent.model.entity;
 
+import com.findjob.job_agent.model.ResumeProfile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class User {
     private String name;
     private String email;
     private String cv_path;
+    private ResumeProfile resumeProfile;
 
     public User(String name, String email){
         this.name = name;

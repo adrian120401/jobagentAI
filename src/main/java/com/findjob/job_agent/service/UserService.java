@@ -1,6 +1,7 @@
 package com.findjob.job_agent.service;
 
 import com.findjob.job_agent.exception.NotFoundException;
+import com.findjob.job_agent.model.ResumeProfile;
 import com.findjob.job_agent.model.dto.UserRequestDTO;
 import com.findjob.job_agent.model.dto.UserResponseDTO;
 import com.findjob.job_agent.model.entity.User;
@@ -22,16 +23,23 @@ import java.util.Map;
 public class UserService {
     private final UserRepository repository;
     private final CloudinaryService cloudinaryService;
+    private final CVAnalyzeAI cvAnalyzeAI;
 
-    public UserService(UserRepository repository, CloudinaryService cloudinaryService) {
+    public UserService(UserRepository repository, CloudinaryService cloudinaryService, CVAnalyzeAI cvAnalyzeAI) {
         this.repository = repository;
         this.cloudinaryService = cloudinaryService;
+        this.cvAnalyzeAI = cvAnalyzeAI;
     }
 
     public UserResponseDTO register(UserRequestDTO userRequestDTO){
         User user = UserMapper.toEntity(userRequestDTO);
         User savedUser = repository.save(user);
         return UserMapper.fromEntity(savedUser);
+    }
+
+    public UserResponseDTO getUserById() {
+        User user = repository.findById("67f6109fa7c79601e396bc0c").orElseThrow(() -> new NotFoundException("User not found"));
+        return UserMapper.fromEntity(user);
     }
 
     public void uploadCv(MultipartFile cv){
@@ -41,7 +49,7 @@ public class UserService {
         repository.save(user);
     }
 
-    public String readCV() {
+    public void readCV() {
         User user = repository.findById("67f6109fa7c79601e396bc0c").orElseThrow(() -> new NotFoundException("User not found"));
         try {
             URL url = URI.create(user.getCv_path()).toURL();
@@ -51,11 +59,33 @@ public class UserService {
                 
                 PDFTextStripper textStripper = new PDFTextStripper();
 
-                System.out.println();
-                return textStripper.getText(document);
+                String rawText = textStripper.getText(document);
+                document.close();
+
+                String sanitizedText = sanitizeText(rawText);
+
+                String response = cvAnalyzeAI.analyzeCV(sanitizedText);
+
+                if(response == null){
+                    throw new Exception("Error analyzing cv");
+                }
+
+                System.out.println(response);
+                ResumeProfile resumeProfile = ResumeProfile.parseResumeResponse(response);
+
+                user.setResumeProfile(resumeProfile);
+                repository.save(user);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error processing PDF");
         }
+    }
+    public String sanitizeText(String rawText) {
+        return rawText
+                .replaceAll("\\r?\\n", "\\\\n")
+                .replaceAll("\\s{2,}", " ")
+                .replaceAll("•", "-")
+                .replaceAll("–", "-")
+                .trim();
     }
 }

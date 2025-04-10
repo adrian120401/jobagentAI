@@ -28,6 +28,11 @@ public class UserController {
         return userService.register(userRequestDTO);
     }
 
+    @GetMapping("/me")
+    public UserResponseDTO getById(){
+        return userService.getUserById();
+    }
+
     @PostMapping("/cv")
     public ResponseEntity<Map<String, String>> uploadCv(@RequestParam("file") MultipartFile file){
         userService.uploadCv(file);
@@ -39,9 +44,9 @@ public class UserController {
 
     @GetMapping("/cv")
     public ResponseEntity<Map<String, String>> getCvText(){
-        String text = userService.readCV();
+        userService.readCV();
         Map<String, String> response = new HashMap<>();
-        response.put("text", text);
+        response.put("message", "Analyze CV successfully");
         return ResponseEntity.ok(response);
     }
 }
