@@ -1,5 +1,6 @@
 package com.findjob.job_agent.model.dto;
 
+import com.findjob.job_agent.model.ResumeProfile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,4 +12,5 @@ public class UserResponseDTO {
     private String id;
     private String name;
     private String email;
+    private ResumeProfile resumeProfile;
 }
