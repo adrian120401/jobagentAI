@@ -33,14 +33,18 @@ const ChatInterface = ({ messages, onSendMessage, isLoadingMessage }: ChatInterf
         setInputValue('');
     };
 
-    // Auto-scroll al recibir nuevos mensajes
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     const renderMessageContent = (content: MessageContent) => {
         if (typeof content === 'string') {
-            return <p className="whitespace-pre-wrap break-words">{content}</p>;
+            return (
+                <div
+                    className="chat-content flex flex-col gap-2"
+                    dangerouslySetInnerHTML={{ __html: content }}
+                />
+            );
         } else if (Array.isArray(content)) {
             return (
                 <div className="space-y-4">

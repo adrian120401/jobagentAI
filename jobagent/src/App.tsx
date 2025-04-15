@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import ChatInterface from './components/chat/ChatInterface';
 import { Message, MessageContent } from './components/chat/ChatInterface';
-import { jobs } from './data/data';
+import { IJobResponse } from './types/IJob';
+import { getMessage } from './api/chat';
+import { useJob } from './context/JobContext';
 
 function App() {
     const [isLoadingMessage, setIsLoadingMessage] = useState(false);
@@ -12,8 +14,9 @@ function App() {
             isUser: false,
         },
     ]);
+    const { jobSelected } = useJob();
 
-    const handleSendMessage = (message: string) => {
+    const handleSendMessage = async (message: string) => {
         if (!message.trim()) return;
 
         const userMessage: Message = {
@@ -25,9 +28,12 @@ function App() {
         setMessages((prev) => [...prev, userMessage]);
 
         setIsLoadingMessage(true);
-
-        setTimeout(() => {
-            const responseContent: MessageContent = jobs;
+        try {
+            const response: IJobResponse = await getMessage({
+                message,
+                jobId: jobSelected?.jobId || null,
+            });
+            const responseContent: MessageContent = response.jobs || response.message;
 
             const botResponse: Message = {
                 id: (Date.now() + 1).toString(),
@@ -36,8 +42,11 @@ function App() {
             };
 
             setMessages((prev) => [...prev, botResponse]);
+        } catch (error) {
+            console.error('Error al obtener la respuesta:', error);
+        } finally {
             setIsLoadingMessage(false);
-        }, 1000);
+        }
     };
 
     return (

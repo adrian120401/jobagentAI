@@ -1,13 +1,14 @@
 import { IJob } from '@/types/IJob';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ExternalLink } from 'lucide-react';
-
+import { ExternalLink, CheckCircle } from 'lucide-react';
+import { useJob } from '@/context/JobContext';
 interface JobCardProps {
     job: IJob;
 }
 
 export const JobCard = ({ job }: JobCardProps) => {
+    const { setJobSelected } = useJob();
     const matchPercentage = Math.round(job.matchScore * 100);
     const isHighMatch = matchPercentage >= 80;
 
@@ -78,21 +79,33 @@ export const JobCard = ({ job }: JobCardProps) => {
             </div>
 
             <div className="border-t border-border/40">
-                <Button
-                    variant="ghost"
-                    className="w-full rounded-none text-xs font-medium h-12"
-                    asChild
-                >
-                    <a
-                        href={job.job.jobUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5"
+                <div className="flex justify-between">
+                    <Button
+                        variant="ghost"
+                        className="w-1/2 rounded-none text-xs font-medium h-12 hover:bg-muted/50"
+                        onClick={() => setJobSelected(job)}
                     >
-                        Ver Oferta
-                        <ExternalLink size={14} />
-                    </a>
-                </Button>
+                        <span className="flex items-center gap-1.5">
+                            Seleccionar
+                            <CheckCircle size={14} />
+                        </span>
+                    </Button>
+                    <Button
+                        variant="default"
+                        className="w-1/2 rounded-none text-xs font-medium h-12 bg-primary/90 hover:bg-primary"
+                        asChild
+                    >
+                        <a
+                            href={job.job.jobUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-1.5"
+                        >
+                            Ver Oferta
+                            <ExternalLink size={14} />
+                        </a>
+                    </Button>
+                </div>
             </div>
         </Card>
     );

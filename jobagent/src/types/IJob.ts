@@ -14,3 +14,13 @@ export interface IJobDetail {
     companyName: string;
     companyLogo: string;
 }
+
+export interface IJobRequest {
+    message: string;
+    jobId: string | null;
+}
+
+export interface IJobResponse {
+    message: string;
+    jobs: IJob[];
+}
