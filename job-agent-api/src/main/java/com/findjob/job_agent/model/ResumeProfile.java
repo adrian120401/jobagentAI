@@ -14,6 +14,7 @@ public class ResumeProfile {
     public String portfolio;
     public String title;
     public String summary;
+    public Integer totalExperience;
     public List<String> skills;
     public List<String> languages;
     public List<Experience> experience;

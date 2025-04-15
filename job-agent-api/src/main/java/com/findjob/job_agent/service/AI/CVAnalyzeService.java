@@ -1,4 +1,4 @@
-package com.findjob.job_agent.service;
+package com.findjob.job_agent.service.AI;
 
 import com.azure.ai.inference.ChatCompletionsClient;
 import com.azure.ai.inference.ChatCompletionsClientBuilder;
@@ -12,20 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CVAnalyzeAI {
-    @Value("${github.token}")
-    private String key;
+public class CVAnalyzeService {
+    private final ChatCompletionsClient client;
+
+    public CVAnalyzeService(ChatCompletionsClient client) {
+        this.client = client;
+    }
 
     public String analyzeCV(String cvText) {
         try {
-            String endpoint = "https://models.inference.ai.azure.com";
-            String model = "gpt-4o";
-
-            ChatCompletionsClient client = new ChatCompletionsClientBuilder()
-                    .credential(new AzureKeyCredential(key))
-                    .endpoint(endpoint)
-                    .buildClient();
-
             String systemMessage = "You are an AI agent that analyzes plain-text resumes and extracts relevant information. Always respond in a compact, valid, minified JSON string in one line. Ensure all special characters within JSON string values (like newlines, quotes, backslashes) are properly escaped (e.g., \\n, \\\", \\\\). If a field is missing or cannot be determined, use an empty string or default value (e.g., [] for lists).";
 
             BinaryData data = getBinaryByText(cvText);
@@ -35,7 +30,7 @@ public class CVAnalyzeAI {
             );
 
             ChatCompletionsOptions chatCompletionsOptions = new ChatCompletionsOptions(chatMessages);
-            chatCompletionsOptions.setModel(model);
+            chatCompletionsOptions.setModel("gpt-4o");
 
             ChatCompletions completions = client.complete(chatCompletionsOptions);
 
@@ -62,6 +57,7 @@ public class CVAnalyzeAI {
                   "summary": "",
                   "skills": [],
                   "languages": [],
+                  "totalExperience": 0,
                   "experience": [
                     {
                       "position": "",

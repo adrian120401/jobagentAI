@@ -7,6 +7,7 @@ import com.findjob.job_agent.model.dto.UserResponseDTO;
 import com.findjob.job_agent.model.entity.User;
 import com.findjob.job_agent.model.mapper.UserMapper;
 import com.findjob.job_agent.repository.UserRepository;
+import com.findjob.job_agent.service.AI.CVAnalyzeService;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -22,12 +23,12 @@ import java.util.Map;
 public class UserService {
     private final UserRepository repository;
     private final CloudinaryService cloudinaryService;
-    private final CVAnalyzeAI cvAnalyzeAI;
+    private final CVAnalyzeService cvAnalyzeService;
 
-    public UserService(UserRepository repository, CloudinaryService cloudinaryService, CVAnalyzeAI cvAnalyzeAI) {
+    public UserService(UserRepository repository, CloudinaryService cloudinaryService, CVAnalyzeService cvAnalyzeService) {
         this.repository = repository;
         this.cloudinaryService = cloudinaryService;
-        this.cvAnalyzeAI = cvAnalyzeAI;
+        this.cvAnalyzeService = cvAnalyzeService;
     }
 
     public UserResponseDTO register(UserRequestDTO userRequestDTO){
@@ -63,7 +64,7 @@ public class UserService {
 
                 String sanitizedText = sanitizeText(rawText);
 
-                String response = cvAnalyzeAI.analyzeCV(sanitizedText);
+                String response = cvAnalyzeService.analyzeCV(sanitizedText);
 
                 if(response == null){
                     throw new Exception("Error analyzing cv");

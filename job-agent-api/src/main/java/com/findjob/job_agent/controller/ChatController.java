@@ -1,28 +1,25 @@
 package com.findjob.job_agent.controller;
 
-import com.findjob.job_agent.service.CVAnalyzeAI;
+import com.findjob.job_agent.model.dto.ChatRequest;
+import com.findjob.job_agent.model.dto.ChatResponse;
+import com.findjob.job_agent.service.ChatService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
+@Validated
 @RestController
 @RequestMapping("/chats")
 public class ChatController {
-    private final CVAnalyzeAI ai;
+    private final ChatService service;
 
-    public ChatController(CVAnalyzeAI ai) {
-        this.ai = ai;
+    public ChatController(ChatService service) {
+        this.service = service;
     }
 
-/*    @GetMapping("/test")
-    public ResponseEntity<Map<String, String>> test(){
-        String message = ai.test();
-        Map<String, String> response = new HashMap<>();
-        response.put("message", message);
+    @PostMapping("")
+    public ResponseEntity<ChatResponse> test(@RequestBody ChatRequest request){
+        ChatResponse response = service.process(request.getMessage(), request.getJobId());
         return ResponseEntity.ok(response);
-    }*/
+    }
 }
