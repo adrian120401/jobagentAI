@@ -4,8 +4,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { IJob } from '@/types/IJob';
 import { JobCard } from '@/components/JobCard';
 import InputForm from './InputForm';
-import { Navbar } from '@/components/navbar/navbar';
-import { Loader2 } from 'lucide-react';
+
+import { BotMessageSquare, Loader2 } from 'lucide-react';
+import { Navbar } from '../navbar/Navbar';
+import { useUser } from '@/context/UserContext';
 export type MessageContent = string | IJob[];
 
 export interface Message {
@@ -22,7 +24,8 @@ interface ChatInterfaceProps {
 
 const ChatInterface = ({ messages, onSendMessage, isLoadingMessage }: ChatInterfaceProps) => {
     const [inputValue, setInputValue] = useState('');
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user } = useUser();
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -59,7 +62,7 @@ const ChatInterface = ({ messages, onSendMessage, isLoadingMessage }: ChatInterf
 
     return (
         <div className="flex flex-col h-full">
-            <Navbar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+            <Navbar />
 
             <div className="flex flex-col justify-between flex-1 w-full max-w-4xl mx-auto overflow-y-auto">
                 <ScrollArea className="flex-1 overflow-y-auto">
@@ -74,7 +77,7 @@ const ChatInterface = ({ messages, onSendMessage, isLoadingMessage }: ChatInterf
                                 {!message.isUser && (
                                     <Avatar className="mr-2 flex-shrink-0 mt-1">
                                         <AvatarFallback className="bg-primary text-primary-foreground">
-                                            A
+                                            <BotMessageSquare className="w-4 h-4" />
                                         </AvatarFallback>
                                     </Avatar>
                                 )}
@@ -90,7 +93,7 @@ const ChatInterface = ({ messages, onSendMessage, isLoadingMessage }: ChatInterf
                                 {message.isUser && (
                                     <Avatar className="ml-2 flex-shrink-0 mt-1">
                                         <AvatarFallback className="bg-primary text-primary-foreground">
-                                            U
+                                            {user?.name?.charAt(0).toUpperCase()}
                                         </AvatarFallback>
                                     </Avatar>
                                 )}

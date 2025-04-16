@@ -1,17 +1,21 @@
 export const API_BASE_URL = 'http://localhost:8080';
 
 interface FetchOptions extends RequestInit {
-    token?: string;
+    public?: boolean;
 }
 
 export async function fetchApi<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
-    const { token, ...fetchOptions } = options;
+    const { public: isPublic, ...fetchOptions } = options;
 
     const headers = new Headers(options.headers);
     headers.set('Content-Type', 'application/json');
 
-    if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
+    if (!isPublic) {
+        const token = localStorage.getItem('token');
+        console.log('token', token);
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {

@@ -52,7 +52,7 @@ public class ChatService {
     }
 
     public ChatResponse getJobs() {
-        ResumeProfile resumeProfile = userService.getUserById().getResumeProfile();
+        ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
         List<JobSearched> jobs = jobSearchedService.getAllJobs();
         List<JobSearched> firstFiveJobs = jobs.size() > 5 ? jobs.subList(0, 5) : jobs;
 
@@ -77,7 +77,7 @@ public class ChatService {
 
     public ChatResponse getJobDetail(String userMessage, String jobId) {
         JobSearched jobSearched = jobSearchedService.getById(jobId);
-        ResumeProfile resumeProfile = userService.getUserById().getResumeProfile();
+        ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
 
         String details = jobAnalyzeDetailService.analyzeJobDetail(userMessage, jobSearched, resumeProfile);
         ChatResponse response = new ChatResponse();
@@ -86,8 +86,8 @@ public class ChatService {
     }
 
     public ChatResponse getResumeAdvice(String userMessage, String jobId) {
-        JobSearched jobSearched = jobId.isBlank() ? jobSearchedService.getById(jobId) : null;
-        ResumeProfile resumeProfile = userService.getUserById().getResumeProfile();
+        JobSearched jobSearched = jobId != null && !jobId.isBlank() ? jobSearchedService.getById(jobId) : null;
+        ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
 
         String advices = resumeAdviceService.adviseOnResume(userMessage, resumeProfile, jobSearched);
         ChatResponse response = new ChatResponse();
@@ -96,7 +96,7 @@ public class ChatService {
     }
 
     public ChatResponse getGeneralResponse(String userMessage) {
-        ResumeProfile resumeProfile = userService.getUserById().getResumeProfile();
+        ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
 
         String generalResponse = generalService.askGeneralQuestion(userMessage, resumeProfile);
         ChatResponse response = new ChatResponse();

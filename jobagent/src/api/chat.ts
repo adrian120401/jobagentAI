@@ -5,5 +5,6 @@ export async function getMessage(request: IJobRequest): Promise<IJobResponse> {
     return fetchApi<IJobResponse>('/chats', {
         method: 'POST',
         body: JSON.stringify(request),
+        public: false,
     });
 }

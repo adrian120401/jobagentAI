@@ -1,5 +1,7 @@
 package com.findjob.job_agent.controller;
 
+import com.findjob.job_agent.model.dto.LoginRequestDTO;
+import com.findjob.job_agent.model.dto.LoginResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,7 @@ import com.findjob.job_agent.model.dto.UserResponseDTO;
 import com.findjob.job_agent.service.UserService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,25 +31,22 @@ public class UserController {
         return userService.register(userRequestDTO);
     }
 
+    @PostMapping("/login")
+    public LoginResponseDTO login(@RequestBody LoginRequestDTO loginRequestDTO){
+        return userService.login(loginRequestDTO);
+    }
+
     @GetMapping("/me")
-    public UserResponseDTO getById(){
-        return userService.getUserById();
+    public UserResponseDTO getMe(){
+        return userService.getMe();
     }
 
     @PostMapping("/cv")
-    public ResponseEntity<Map<String, String>> uploadCv(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<Map<String, String>> uploadCv(@RequestParam("file") MultipartFile file) throws IOException {
         userService.uploadCv(file);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "CV uploaded successfully");
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/cv")
-    public ResponseEntity<Map<String, String>> getCvText(){
-        userService.readCV();
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Analyze CV successfully");
         return ResponseEntity.ok(response);
     }
 }
