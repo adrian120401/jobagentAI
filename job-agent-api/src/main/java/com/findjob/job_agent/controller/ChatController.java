@@ -2,6 +2,8 @@ package com.findjob.job_agent.controller;
 
 import com.findjob.job_agent.model.dto.ChatRequest;
 import com.findjob.job_agent.model.dto.ChatResponse;
+import com.findjob.job_agent.model.dto.InterviewRequest;
+import com.findjob.job_agent.model.dto.InterviewSession;
 import com.findjob.job_agent.service.ChatService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,8 +20,14 @@ public class ChatController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ChatResponse> test(@RequestBody ChatRequest request){
+    public ResponseEntity<ChatResponse> test(@RequestBody ChatRequest request) {
         ChatResponse response = service.process(request.getMessage(), request.getJobId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/interview")
+    public ResponseEntity<InterviewSession> interview(@RequestBody InterviewRequest request) {
+        InterviewSession response = service.getInterview(request.getJobId(), request.getHistory());
         return ResponseEntity.ok(response);
     }
 }

@@ -2,6 +2,7 @@ package com.findjob.job_agent.service;
 
 import com.findjob.job_agent.model.UserIntent;
 import com.findjob.job_agent.model.dto.ChatResponse;
+import com.findjob.job_agent.model.dto.InterviewSession;
 import com.findjob.job_agent.model.JobInformation;
 import com.findjob.job_agent.model.JobMatchResult;
 import com.findjob.job_agent.model.ResumeProfile;
@@ -20,6 +21,7 @@ public class ChatService {
     private final JobAnalyzeDetailService jobAnalyzeDetailService;
     private final ResumeAdviceService resumeAdviceService;
     private final GeneralService generalService;
+    private final InterviewService interviewService;
 
     public ChatService(
             MatchUserService matchUserService,
@@ -28,8 +30,8 @@ public class ChatService {
             IntentDetectionService intentDetectionService,
             JobAnalyzeDetailService jobAnalyzeDetailService,
             ResumeAdviceService resumeAdviceService,
-            GeneralService generalService
-    ) {
+            GeneralService generalService,
+            InterviewService interviewService) {
         this.matchUserService = matchUserService;
         this.userService = userService;
         this.jobSearchedService = jobSearchedService;
@@ -37,11 +39,14 @@ public class ChatService {
         this.jobAnalyzeDetailService = jobAnalyzeDetailService;
         this.resumeAdviceService = resumeAdviceService;
         this.generalService = generalService;
+        this.interviewService = interviewService;
     }
 
     public ChatResponse process(String userMessage, String jobId) {
+        if(jobId != null){
+            userMessage = userMessage.concat(" jobId: " + jobId);
+        }
         UserIntent intent = intentDetectionService.detectIntent(userMessage);
-
         System.out.println("intent: " + intent.name());
         return switch (intent) {
             case JOB_LISTING -> getJobs();
@@ -102,5 +107,11 @@ public class ChatService {
         ChatResponse response = new ChatResponse();
         response.setMessage(generalResponse);
         return response;
+    }
+
+    public InterviewSession getInterview(String jobId, List<InterviewSession> history) {
+        JobSearched jobSearched = jobSearchedService.getById(jobId);
+        InterviewSession interviewSession = interviewService.nextInterviewStep(jobSearched, history);
+        return interviewSession;
     }
 }

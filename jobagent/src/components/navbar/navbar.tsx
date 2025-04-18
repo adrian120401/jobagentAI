@@ -7,17 +7,47 @@ import { LoginMenu } from '../menu/LoginMenu';
 import UserDropdown from './UserDropdown';
 import { useUser } from '@/context/UserContext';
 import UserMenu from '../menu/UserMenu';
+import { useJob } from '@/context/JobContext';
+import { X } from 'lucide-react';
+import InterviewMenu from '../InterviewMenu';
 
 export const Navbar = () => {
     const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isInterviewMenuOpen, setIsInterviewMenuOpen] = useState(false);
 
     const { isAuthenticated, user, logout } = useUser();
+    const { jobSelected, setJobSelected } = useJob();
 
     return (
         <header className="border-b border-border py-3 px-4 flex items-center justify-between h-14 bg-card">
             <div className="text-lg font-medium">JobAgent</div>
+
+            {jobSelected && (
+                <div className="flex gap-2">
+                    <div className="flex items-center gap-2 border border-border rounded-lg p-2">
+                        <span className="text-xs text-muted-foreground max-w-[200px] truncate">
+                            {jobSelected.job.title}
+                        </span>
+                        <Button
+                            className="h-4 w-4"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setJobSelected(null)}
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <Button
+                        variant="outline"
+                        className=""
+                        onClick={() => setIsInterviewMenuOpen(true)}
+                    >
+                        Iniciar entrevista
+                    </Button>
+                </div>
+            )}
 
             <div className="flex items-center gap-2">
                 <ThemeToggle />
@@ -58,6 +88,11 @@ export const Navbar = () => {
                     <LoginMenu isOpen={isLoginMenuOpen} setIsOpen={setIsLoginMenuOpen} />
                 </div>
             </div>
+            <InterviewMenu
+                isOpen={isInterviewMenuOpen}
+                onClose={() => setIsInterviewMenuOpen(false)}
+                jobId={jobSelected?.jobId}
+            />
         </header>
     );
 };

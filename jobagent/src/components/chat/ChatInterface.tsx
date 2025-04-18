@@ -4,8 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { IJob } from '@/types/IJob';
 import { JobCard } from '@/components/JobCard';
 import InputForm from './InputForm';
-
-import { BotMessageSquare, Loader2 } from 'lucide-react';
+import { BotMessageSquare } from 'lucide-react';
 import { Navbar } from '../navbar/Navbar';
 import { useUser } from '@/context/UserContext';
 export type MessageContent = string | IJob[];
@@ -101,8 +100,8 @@ const ChatInterface = ({ messages, onSendMessage, isLoadingMessage }: ChatInterf
                         ))}
                         <div ref={messagesEndRef} />
                         {isLoadingMessage && (
-                            <div className="flex justify-center items-center">
-                                <Loader2 className="w-8 h-8 animate-spin" />
+                            <div className="flex justify-center items-center py-4">
+                                <BotMessageSquare className="w-6 h-6 animate-pulse text-muted-foreground" />
                             </div>
                         )}
                     </div>

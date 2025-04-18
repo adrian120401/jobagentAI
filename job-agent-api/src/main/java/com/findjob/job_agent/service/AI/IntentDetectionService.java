@@ -27,7 +27,7 @@ public class IntentDetectionService {
                     - GENERAL: Anything else that does not fit the above.
 
                     Instructions:
-                    - Analyze the user message carefully.
+                    - Analyze the user message carefully, If the message has a jobId, take this into account to better analyze the intention, they may be things related to it.
                     - Respond **only** with one of the following exact values: JOB_LISTING, JOB_DETAIL, CV_ADVICE, GENERAL.
                     - Do **not** include any explanation or additional text.
                     """;

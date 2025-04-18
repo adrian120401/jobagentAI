@@ -36,6 +36,7 @@ public class MatchUserService {
                        - `jobId`: the job's ID
                        - `matchScore`: a number between 0.0 and 1.0 indicating how well it matches
                        - `reason`: a short explanation of the match (e.g., “Strong match on backend skills: Java, Spring Boot”)
+                    4. Don't repeat jobs, based on job's ID
 
                     Requirements:
                     - Only include jobs with matchScore > 0.5.
