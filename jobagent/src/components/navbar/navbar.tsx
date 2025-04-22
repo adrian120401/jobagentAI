@@ -10,15 +10,24 @@ import UserMenu from '../menu/UserMenu';
 import { useJob } from '@/context/JobContext';
 import { X } from 'lucide-react';
 import InterviewMenu from '../InterviewMenu';
+import { IInterviewResume } from '@/types/IInterview';
+import InterviewResume from '../menu/InterviewResume';
 
 export const Navbar = () => {
     const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isInterviewMenuOpen, setIsInterviewMenuOpen] = useState(false);
+    const [interviewResume, setInterviewResume] = useState<IInterviewResume | null>(null);
+    const [interviewResumeOpen, setInterviewResumeOpen] = useState(false);
 
     const { isAuthenticated, user, logout } = useUser();
     const { jobSelected, setJobSelected } = useJob();
+
+    const interviewResumeShow = (interview: IInterviewResume, open: boolean) => {
+        setInterviewResumeOpen(open);
+        setInterviewResume(interview);
+    };
 
     return (
         <header className="border-b border-border py-3 px-4 flex items-center justify-between h-14 bg-card">
@@ -92,6 +101,12 @@ export const Navbar = () => {
                 isOpen={isInterviewMenuOpen}
                 onClose={() => setIsInterviewMenuOpen(false)}
                 jobId={jobSelected?.jobId}
+                interviewResume={interviewResumeShow}
+            />
+            <InterviewResume
+                isOpen={interviewResumeOpen}
+                onClose={() => setInterviewResumeOpen(false)}
+                interviewResume={interviewResume}
             />
         </header>
     );

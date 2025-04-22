@@ -12,7 +12,6 @@ export async function fetchApi<T>(endpoint: string, options: FetchOptions = {}):
 
     if (!isPublic) {
         const token = localStorage.getItem('token');
-        console.log('token', token);
         if (token) {
             headers.set('Authorization', `Bearer ${token}`);
         }

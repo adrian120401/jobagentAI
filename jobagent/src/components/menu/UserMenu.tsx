@@ -73,19 +73,16 @@ const UserMenu = ({ isOpen, setIsOpen }: UserMenuProps) => {
     const handleUpload = async () => {
         if (!cvFile) return;
         setUploadStatus('uploading');
-        console.log('Subiendo archivo:', cvFile.name);
         try {
-            // Lógica para subir el archivo al backend
-            await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulación
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             const success = Math.random() > 0.3;
             setUploadStatus(success ? 'success' : 'error');
             if (success) {
                 setCvFile(null);
-                // Opcional: Actualizar user.cv_path en el contexto o refetch user
             }
         } catch (error) {
-            console.error('Error al subir CV:', error);
             setUploadStatus('error');
+            console.error('Error:', error);
         }
     };
 

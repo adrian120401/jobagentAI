@@ -39,8 +39,7 @@ public class UserService {
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
             CloudinaryService cloudinaryService,
-            CVAnalyzeService cvAnalyzeService
-    ) {
+            CVAnalyzeService cvAnalyzeService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -57,7 +56,8 @@ public class UserService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
-        User user = repository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = repository.findByEmail(loginRequestDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
             throw new UnauthorizedException("Invalid credentials");
@@ -76,6 +76,10 @@ public class UserService {
 
     public UserResponseDTO getMe() {
         return UserMapper.fromEntity(getAuthUser());
+    }
+
+    public User getFirstUser() {
+        return repository.findAll().get(0);
     }
 
     public void uploadCv(MultipartFile cv) throws IOException {

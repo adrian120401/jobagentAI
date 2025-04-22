@@ -7,6 +7,7 @@ import com.findjob.job_agent.model.JobInformation;
 import com.findjob.job_agent.model.JobMatchResult;
 import com.findjob.job_agent.model.ResumeProfile;
 import com.findjob.job_agent.model.entity.JobSearched;
+import com.findjob.job_agent.model.entity.User;
 import com.findjob.job_agent.service.AI.*;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class ChatService {
     private final JobAnalyzeDetailService jobAnalyzeDetailService;
     private final ResumeAdviceService resumeAdviceService;
     private final GeneralService generalService;
-    private final InterviewService interviewService;
+    private final InterviewServiceAI interviewService;
 
     public ChatService(
             MatchUserService matchUserService,
@@ -31,7 +32,7 @@ public class ChatService {
             JobAnalyzeDetailService jobAnalyzeDetailService,
             ResumeAdviceService resumeAdviceService,
             GeneralService generalService,
-            InterviewService interviewService) {
+            InterviewServiceAI interviewService) {
         this.matchUserService = matchUserService;
         this.userService = userService;
         this.jobSearchedService = jobSearchedService;
@@ -110,8 +111,8 @@ public class ChatService {
     }
 
     public InterviewSession getInterview(String jobId, List<InterviewSession> history) {
+        User user = userService.getAuthUser();
         JobSearched jobSearched = jobSearchedService.getById(jobId);
-        InterviewSession interviewSession = interviewService.nextInterviewStep(jobSearched, history);
-        return interviewSession;
+        return interviewService.nextInterviewStep(jobSearched, history, user.getId());
     }
 }
