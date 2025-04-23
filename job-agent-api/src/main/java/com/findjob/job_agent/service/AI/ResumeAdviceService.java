@@ -4,8 +4,9 @@ import com.azure.ai.inference.ChatCompletionsClient;
 import com.azure.ai.inference.models.*;
 import com.azure.core.util.BinaryData;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.findjob.job_agent.model.ResumeProfile;
+import com.findjob.job_agent.model.dto.ResumeProfile;
 import com.findjob.job_agent.model.entity.JobSearched;
+import com.findjob.job_agent.config.PromptConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,19 +21,7 @@ public class ResumeAdviceService {
 
     public String adviseOnResume(String userMessage, ResumeProfile resume, JobSearched job) {
         try {
-            String systemPrompt = """
-            You are an expert career advisor specializing in technical CV/resume improvement.
-
-            Your job is to analyze a candidate’s resume and give clear, structured advice based on the user's message.
-
-            Instructions:
-            - Always reply in English.
-            - Output must be clean, basic HTML (<p>, <ul>, <li>, <h2>, etc.).
-            - If a job is provided, tailor the suggestions to fit that job, but avoid hallucinating or assuming things not present.
-            - Job data may contain HTML (e.g. description, benefits, functions). Ignore all HTML formatting and use only the raw textual content.
-            - If no job is provided, give general advice based on the resume only.
-            - Do not expose raw JSON or code. Only return helpful suggestions in user-friendly HTML.
-            """;
+            String systemPrompt = PromptConstants.RESUME_ADVICE_PROMPT;
 
             ObjectMapper mapper = new ObjectMapper();
             String resumeJson = mapper.writeValueAsString(resume);

@@ -86,7 +86,7 @@ export const JobCard = ({ job }: JobCardProps) => {
                         onClick={() => setJobSelected(job)}
                     >
                         <span className="flex items-center gap-1.5">
-                            Seleccionar
+                            Select
                             <CheckCircle size={14} />
                         </span>
                     </Button>
@@ -101,7 +101,7 @@ export const JobCard = ({ job }: JobCardProps) => {
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-1.5"
                         >
-                            Ver Oferta
+                            View Offer
                             <ExternalLink size={14} />
                         </a>
                     </Button>

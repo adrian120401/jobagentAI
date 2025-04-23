@@ -4,8 +4,9 @@ import com.azure.ai.inference.ChatCompletionsClient;
 import com.azure.ai.inference.models.*;
 import com.azure.core.util.BinaryData;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.findjob.job_agent.model.ResumeProfile;
+import com.findjob.job_agent.model.dto.ResumeProfile;
 import com.findjob.job_agent.model.entity.JobSearched;
+import com.findjob.job_agent.config.PromptConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,20 +21,7 @@ public class JobAnalyzeDetailService {
 
     public String analyzeJobDetail(String userMessage, JobSearched jobInfo, ResumeProfile resumeProfile) {
         try {
-            String systemPrompt = """
-            You are an AI assistant that provides job detail insights to the user, based on a specific question or prompt.
-
-            Instructions:
-            - Use the job information provided below to answer the user's message.
-            - If resume information is provided, use it to personalize the response (e.g., comparing requirements with user's profile).
-            - Job fields such as description or functions may contain HTML tags or formatting. Ignore all HTML content and focus only on the textual meaning.
-            - Respond in clean and valid HTML (no JavaScript or CSS). Only include the relevant content, like <p>, <ul>, <li>, <b>, <strong>, <h2>, etc.
-            - Do not generate links unless there's a `jobUrl` provided.
-            - If a value is missing or not relevant to the user's question, omit it silently.
-            - Make the output readable and user-friendly.
-
-            Always respond in English.
-            """;
+            String systemPrompt = PromptConstants.JOB_ANALYZE_DETAIL_PROMPT;
 
             ObjectMapper mapper = new ObjectMapper();
             String jobJson = mapper.writeValueAsString(jobInfo);

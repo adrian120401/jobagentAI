@@ -1,6 +1,5 @@
 package com.findjob.job_agent.model.dto;
 
-import com.findjob.job_agent.model.ResumeProfile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,11 +1,11 @@
 package com.findjob.job_agent.service;
 
-import com.findjob.job_agent.model.UserIntent;
 import com.findjob.job_agent.model.dto.ChatResponse;
 import com.findjob.job_agent.model.dto.InterviewSession;
-import com.findjob.job_agent.model.JobInformation;
-import com.findjob.job_agent.model.JobMatchResult;
-import com.findjob.job_agent.model.ResumeProfile;
+import com.findjob.job_agent.model.dto.JobMatchResult;
+import com.findjob.job_agent.model.dto.ResumeProfile;
+import com.findjob.job_agent.model.dto.UserIntent;
+import com.findjob.job_agent.model.dto.JobInformation;
 import com.findjob.job_agent.model.entity.JobSearched;
 import com.findjob.job_agent.model.entity.User;
 import com.findjob.job_agent.service.AI.*;

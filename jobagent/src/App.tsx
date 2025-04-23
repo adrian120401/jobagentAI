@@ -10,7 +10,7 @@ function App() {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
-            content: 'Hola, soy tu asistente de búsqueda de empleo. ¿En qué puedo ayudarte hoy?',
+            content: 'Hello, I am your job search assistant. How can I help you today?',
             isUser: false,
         },
     ]);

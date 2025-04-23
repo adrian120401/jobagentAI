@@ -2,7 +2,8 @@ package com.findjob.job_agent.service.AI;
 
 import com.azure.ai.inference.ChatCompletionsClient;
 import com.azure.ai.inference.models.*;
-import com.findjob.job_agent.model.UserIntent;
+import com.findjob.job_agent.model.dto.UserIntent;
+import com.findjob.job_agent.config.PromptConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,20 +18,7 @@ public class IntentDetectionService {
 
     public UserIntent detectIntent(String userMessage) {
         try {
-            String systemPrompt = """
-                    You are an AI assistant designed to classify the user's intent based on their message.
-
-                    The valid intents are:
-                    - JOB_LISTING: The user is asking for job recommendations, job matches, or wants to find a list of jobs.
-                    - JOB_DETAIL: The user is asking about a specific job position, job responsibilities, or a detailed job description.
-                    - CV_ADVICE: The user is asking for advice or feedback on their resume, CV, or how to improve their chances.
-                    - GENERAL: Anything else that does not fit the above.
-
-                    Instructions:
-                    - Analyze the user message carefully, If the message has a jobId, take this into account to better analyze the intention, they may be things related to it.
-                    - Respond **only** with one of the following exact values: JOB_LISTING, JOB_DETAIL, CV_ADVICE, GENERAL.
-                    - Do **not** include any explanation or additional text.
-                    """;
+            String systemPrompt = PromptConstants.INTENT_DETECTION_PROMPT;
 
             List<ChatRequestMessage> messages = List.of(
                     new ChatRequestSystemMessage(systemPrompt),

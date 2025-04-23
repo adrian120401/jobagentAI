@@ -1,6 +1,6 @@
 package com.findjob.job_agent.service;
 
-import com.findjob.job_agent.model.JobMatchResult;
+import com.findjob.job_agent.model.dto.JobMatchResult;
 import com.findjob.job_agent.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -26,7 +26,6 @@ public class EmailService {
             helper.setSubject("New job opportunities for you");
             helper.setText(html, true);
             mailSender.send(message);
-            System.out.println("Email send");
         } catch (MessagingException e) {
             throw new RuntimeException("Error sending email: " + e.getMessage(), e);
         }

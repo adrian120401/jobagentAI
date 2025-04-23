@@ -25,7 +25,7 @@ const InputForm = ({ inputValue, setInputValue, handleSubmit, disabled, classNam
                             handleSubmit(e as unknown as React.FormEvent);
                         }
                     }}
-                    placeholder="Escribe un mensaje..."
+                    placeholder="Write a message..."
                     className="rounded-full"
                 />
                 <Button

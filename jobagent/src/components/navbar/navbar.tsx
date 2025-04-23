@@ -53,7 +53,7 @@ export const Navbar = () => {
                         className=""
                         onClick={() => setIsInterviewMenuOpen(true)}
                     >
-                        Iniciar entrevista
+                        Start interview
                     </Button>
                 </div>
             )}
@@ -70,7 +70,7 @@ export const Navbar = () => {
                             className="rounded-full"
                         >
                             <Avatar>
-                                <AvatarImage src="" alt="Usuario" />
+                                <AvatarImage src="" alt="User" />
                                 <AvatarFallback className="bg-primary text-primary-foreground">
                                     {user?.name?.charAt(0)}
                                 </AvatarFallback>
@@ -82,7 +82,7 @@ export const Navbar = () => {
                             className=""
                             onClick={() => setIsLoginMenuOpen(true)}
                         >
-                            Iniciar sesión
+                            Login
                         </Button>
                     )}
 

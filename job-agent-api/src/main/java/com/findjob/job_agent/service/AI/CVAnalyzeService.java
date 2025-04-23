@@ -1,11 +1,9 @@
 package com.findjob.job_agent.service.AI;
 
 import com.azure.ai.inference.ChatCompletionsClient;
-import com.azure.ai.inference.ChatCompletionsClientBuilder;
 import com.azure.ai.inference.models.*;
-import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.util.BinaryData;
-import org.springframework.beans.factory.annotation.Value;
+import com.findjob.job_agent.config.PromptConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -21,7 +19,7 @@ public class CVAnalyzeService {
 
     public String analyzeCV(String cvText) {
         try {
-            String systemMessage = "You are an AI agent that analyzes plain-text resumes and extracts relevant information. Always respond in a compact, valid, minified JSON string in one line. Ensure all special characters within JSON string values (like newlines, quotes, backslashes) are properly escaped (e.g., \\n, \\\", \\\\). If a field is missing or cannot be determined, use an empty string or default value (e.g., [] for lists).";
+            String systemMessage = PromptConstants.CV_ANALYZE_PROMPT;
 
             BinaryData data = getBinaryByText(cvText);
             List<ChatRequestMessage> chatMessages = Arrays.asList(

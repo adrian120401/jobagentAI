@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.findjob.job_agent.model.JobInformation;
-import com.findjob.job_agent.model.JobMatchResult;
+import com.findjob.job_agent.model.dto.JobInformation;
+import com.findjob.job_agent.model.dto.JobMatchResult;
 import com.findjob.job_agent.model.entity.JobSearched;
 import com.findjob.job_agent.model.entity.User;
 import com.findjob.job_agent.service.UserService;
@@ -30,7 +30,6 @@ public class JobSuggestionScheduler {
 
     @Scheduled(cron = "0 0 8 * * ?")
     public void suggestJobs(){
-        System.out.println("Init searching jobs");
         User user = userService.getFirstUser();
         List<JobSearched> jobs = jobSearchedService.getAllJobs();
         List<JobSearched> firstFiveJobs = jobs.size() > 5 ? jobs.subList(0, 5) : jobs;

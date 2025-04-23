@@ -4,7 +4,8 @@ import com.azure.ai.inference.ChatCompletionsClient;
 import com.azure.ai.inference.models.*;
 import com.azure.core.util.BinaryData;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.findjob.job_agent.model.ResumeProfile;
+import com.findjob.job_agent.model.dto.ResumeProfile;
+import com.findjob.job_agent.config.PromptConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,17 +20,7 @@ public class GeneralService {
 
     public String askGeneralQuestion(String userMessage, ResumeProfile resume) {
         try {
-            String systemPrompt = """
-            You are a professional career assistant in the tech industry.
-
-            You must respond clearly and helpfully to user questions, always in English.
-
-            Rules:
-            - Use the user's resume information as context if it helps, but don't force it.
-            - The question may or may not relate to the user's profile.
-            - Respond in simple, clean HTML (<p>, <ul>, <h2>, etc.).
-            - Do not output raw JSON, code, or markdown.
-            """;
+            String systemPrompt = PromptConstants.GENERAL_QUESTION_PROMPT;
 
             ObjectMapper mapper = new ObjectMapper();
             String resumeJson = mapper.writeValueAsString(resume);

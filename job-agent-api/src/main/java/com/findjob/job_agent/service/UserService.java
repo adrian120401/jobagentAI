@@ -2,9 +2,9 @@ package com.findjob.job_agent.service;
 
 import com.findjob.job_agent.exception.NotFoundException;
 import com.findjob.job_agent.exception.UnauthorizedException;
-import com.findjob.job_agent.model.ResumeProfile;
 import com.findjob.job_agent.model.dto.LoginRequestDTO;
 import com.findjob.job_agent.model.dto.LoginResponseDTO;
+import com.findjob.job_agent.model.dto.ResumeProfile;
 import com.findjob.job_agent.model.dto.UserRequestDTO;
 import com.findjob.job_agent.model.dto.UserResponseDTO;
 import com.findjob.job_agent.model.entity.User;

@@ -17,7 +17,17 @@ const UserDropdown = ({ setIsMenuOpen, logout, setIsUserMenuOpen }: UserDropdown
                     setIsUserMenuOpen(true);
                 }}
             >
-                Mi Perfil
+                Profile
+            </Button>
+            <Button
+                variant="ghost"
+                className="w-full justify-start px-4 py-2 text-sm h-auto"
+                onClick={() => {
+                    setIsMenuOpen(false);
+                    setIsUserMenuOpen(true);
+                }}
+            >
+                Interviews history
             </Button>
             <Button
                 variant="ghost"
@@ -27,7 +37,7 @@ const UserDropdown = ({ setIsMenuOpen, logout, setIsUserMenuOpen }: UserDropdown
                     logout();
                 }}
             >
-                Cerrar Sesión
+                Logout
             </Button>
         </div>
     );

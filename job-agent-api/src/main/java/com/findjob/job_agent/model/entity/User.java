@@ -1,6 +1,5 @@
 package com.findjob.job_agent.model.entity;
 
-import com.findjob.job_agent.model.ResumeProfile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.findjob.job_agent.model.dto.ResumeProfile;
 
 import java.util.Collection;
 import java.util.List;
