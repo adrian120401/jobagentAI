@@ -1,4 +1,4 @@
-package com.findjob.job_agent.model.dto;
+package com.findjob.job_agent.model.enums;
 
 public enum UserIntent {
     JOB_LISTING,

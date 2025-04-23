@@ -19,7 +19,7 @@ public class ResumeAdviceService {
         this.client = client;
     }
 
-    public String adviseOnResume(String userMessage, ResumeProfile resume, JobSearched job) {
+    public String adviseOnResume(String userMessage, ResumeProfile resume, JobSearched job, String summary) {
         try {
             String systemPrompt = PromptConstants.RESUME_ADVICE_PROMPT;
 
@@ -34,11 +34,16 @@ public class ResumeAdviceService {
             Resume data:
             %s
 
+            Job data:
+            %s
+
+            Conversation summary:
             %s
             """.formatted(
                     userMessage,
                     resumeJson,
-                    job != null ? "Job data:\n" + jobJson : ""
+                    jobJson,
+                    summary
             );
 
             BinaryData data = BinaryData.fromObject(prompt);
@@ -49,6 +54,9 @@ public class ResumeAdviceService {
 
             ChatCompletionsOptions options = new ChatCompletionsOptions(messages);
             options.setModel("gpt-4o");
+            options.setTemperature(0.7);
+            options.setTopP(0.9);
+            options.setFrequencyPenalty(0.5);
 
             ChatCompletions completions = client.complete(options);
             return completions.getChoices().getFirst().getMessage().getContent().trim();

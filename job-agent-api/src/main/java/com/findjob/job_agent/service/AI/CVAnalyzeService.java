@@ -29,6 +29,7 @@ public class CVAnalyzeService {
 
             ChatCompletionsOptions chatCompletionsOptions = new ChatCompletionsOptions(chatMessages);
             chatCompletionsOptions.setModel("gpt-4o");
+            chatCompletionsOptions.setTemperature(0.5);
 
             ChatCompletions completions = client.complete(chatCompletionsOptions);
 

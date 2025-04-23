@@ -19,7 +19,7 @@ public class JobAnalyzeDetailService {
         this.client = client;
     }
 
-    public String analyzeJobDetail(String userMessage, JobSearched jobInfo, ResumeProfile resumeProfile) {
+    public String analyzeJobDetail(String userMessage, JobSearched jobInfo, ResumeProfile resumeProfile, String summary) {
         try {
             String systemPrompt = PromptConstants.JOB_ANALYZE_DETAIL_PROMPT;
 
@@ -36,7 +36,10 @@ public class JobAnalyzeDetailService {
 
             Resume data (optional, use if helpful):
             %s
-            """.formatted(userMessage, jobJson, resumeJson);
+
+            Conversation summary:
+            %s
+            """.formatted(userMessage, jobJson, resumeJson, summary);
 
             BinaryData data = BinaryData.fromObject(userPrompt);
 
@@ -47,6 +50,9 @@ public class JobAnalyzeDetailService {
 
             ChatCompletionsOptions options = new ChatCompletionsOptions(messages);
             options.setModel("gpt-4o");
+            options.setTemperature(0.7);
+            options.setTopP(0.9);
+            options.setFrequencyPenalty(0.5);
 
             ChatCompletions completions = client.complete(options);
             return completions.getChoices().getFirst().getMessage().getContent().trim();

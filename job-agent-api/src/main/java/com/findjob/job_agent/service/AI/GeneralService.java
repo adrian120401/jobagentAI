@@ -5,6 +5,7 @@ import com.azure.ai.inference.models.*;
 import com.azure.core.util.BinaryData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.findjob.job_agent.model.dto.ResumeProfile;
+import com.findjob.job_agent.model.entity.JobSearched;
 import com.findjob.job_agent.config.PromptConstants;
 import org.springframework.stereotype.Service;
 
@@ -18,20 +19,26 @@ public class GeneralService {
         this.client = client;
     }
 
-    public String askGeneralQuestion(String userMessage, ResumeProfile resume) {
+    public String askGeneralQuestion(String userMessage, ResumeProfile resume, JobSearched jobSearched, String summary) {
         try {
             String systemPrompt = PromptConstants.GENERAL_QUESTION_PROMPT;
 
             ObjectMapper mapper = new ObjectMapper();
             String resumeJson = mapper.writeValueAsString(resume);
-
+            String jobJson = mapper.writeValueAsString(jobSearched);
             String prompt = """
             User question:
             %s
 
             Resume data (use only if relevant):
             %s
-            """.formatted(userMessage, resumeJson);
+
+            Job data (use only if relevant):
+            %s
+
+            Conversation summary:
+            %s
+            """.formatted(userMessage, resumeJson, jobJson, summary);
 
             BinaryData data = BinaryData.fromObject(prompt);
             List<ChatRequestMessage> messages = List.of(
@@ -41,6 +48,9 @@ public class GeneralService {
 
             ChatCompletionsOptions options = new ChatCompletionsOptions(messages);
             options.setModel("gpt-4o");
+            options.setTemperature(0.7);
+            options.setTopP(0.9);
+            options.setFrequencyPenalty(0.5);
 
             ChatCompletions completions = client.complete(options);
             return completions.getChoices().getFirst().getMessage().getContent().trim();

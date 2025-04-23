@@ -58,6 +58,9 @@ public class InterviewServiceAI {
 
             ChatCompletionsOptions options = new ChatCompletionsOptions(messages);
             options.setModel("gpt-4o");
+            options.setTemperature(0.7);
+            options.setTopP(0.9);
+            options.setFrequencyPenalty(0.5);
 
             ChatCompletions completions = client.complete(options);
             String content = completions.getChoices().get(0).getMessage().getContent().trim();

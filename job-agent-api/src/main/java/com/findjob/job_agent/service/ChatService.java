@@ -1,12 +1,15 @@
 package com.findjob.job_agent.service;
 
+import com.findjob.job_agent.model.enums.Sender;
+import com.findjob.job_agent.model.enums.UserIntent;
 import com.findjob.job_agent.model.dto.ChatResponse;
 import com.findjob.job_agent.model.dto.InterviewSession;
 import com.findjob.job_agent.model.dto.JobMatchResult;
 import com.findjob.job_agent.model.dto.ResumeProfile;
-import com.findjob.job_agent.model.dto.UserIntent;
 import com.findjob.job_agent.model.dto.JobInformation;
+import com.findjob.job_agent.model.entity.Conversation;
 import com.findjob.job_agent.model.entity.JobSearched;
+import com.findjob.job_agent.model.entity.Message;
 import com.findjob.job_agent.model.entity.User;
 import com.findjob.job_agent.service.AI.*;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ public class ChatService {
     private final ResumeAdviceService resumeAdviceService;
     private final GeneralService generalService;
     private final InterviewServiceAI interviewService;
+    private final ConversationService conversationService;
+    private final SummaryServiceAI summaryService;
 
     public ChatService(
             MatchUserService matchUserService,
@@ -32,7 +37,9 @@ public class ChatService {
             JobAnalyzeDetailService jobAnalyzeDetailService,
             ResumeAdviceService resumeAdviceService,
             GeneralService generalService,
-            InterviewServiceAI interviewService) {
+            InterviewServiceAI interviewService,
+            ConversationService conversationService,
+            SummaryServiceAI summaryService) {
         this.matchUserService = matchUserService;
         this.userService = userService;
         this.jobSearchedService = jobSearchedService;
@@ -41,20 +48,39 @@ public class ChatService {
         this.resumeAdviceService = resumeAdviceService;
         this.generalService = generalService;
         this.interviewService = interviewService;
+        this.conversationService = conversationService;
+        this.summaryService = summaryService;
     }
 
     public ChatResponse process(String userMessage, String jobId) {
-        if(jobId != null){
+        if (jobId != null) {
             userMessage = userMessage.concat(" jobId: " + jobId);
         }
         UserIntent intent = intentDetectionService.detectIntent(userMessage);
-        System.out.println("intent: " + intent.name());
-        return switch (intent) {
+
+        Conversation conversation = conversationService.getByUserId(userService.getAuthUser().getId());
+        if (intent != UserIntent.JOB_LISTING) {
+            conversation.getMessages().add(new Message(userMessage, Sender.USER));
+        }
+
+        ChatResponse response = switch (intent) {
             case JOB_LISTING -> getJobs();
-            case JOB_DETAIL -> getJobDetail(userMessage, jobId);
-            case CV_ADVICE -> getResumeAdvice(userMessage, jobId);
-            case GENERAL -> getGeneralResponse(userMessage);
+            case JOB_DETAIL -> getJobDetail(userMessage, jobId, conversation.getSummary());
+            case CV_ADVICE -> getResumeAdvice(userMessage, jobId, conversation.getSummary());
+            case GENERAL -> getGeneralResponse(userMessage, jobId, conversation.getSummary());
         };
+
+        if (intent != UserIntent.JOB_LISTING) {
+            conversation.getMessages().add(new Message(response.getMessage(), Sender.AGENT));
+
+            if (shouldSummarize(conversation)) {
+                String summary = summaryService.summarizeConversation(conversation);
+                conversation.setSummary(summary);
+            }
+
+            conversationService.create(conversation);
+        }
+        return response;
     }
 
     public ChatResponse getJobs() {
@@ -81,30 +107,31 @@ public class ChatService {
         return response;
     }
 
-    public ChatResponse getJobDetail(String userMessage, String jobId) {
+    public ChatResponse getJobDetail(String userMessage, String jobId, String summary) {
         JobSearched jobSearched = jobSearchedService.getById(jobId);
         ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
 
-        String details = jobAnalyzeDetailService.analyzeJobDetail(userMessage, jobSearched, resumeProfile);
+        String details = jobAnalyzeDetailService.analyzeJobDetail(userMessage, jobSearched, resumeProfile, summary);
         ChatResponse response = new ChatResponse();
         response.setMessage(details);
         return response;
     }
 
-    public ChatResponse getResumeAdvice(String userMessage, String jobId) {
+    public ChatResponse getResumeAdvice(String userMessage, String jobId, String summary) {
         JobSearched jobSearched = jobId != null && !jobId.isBlank() ? jobSearchedService.getById(jobId) : null;
         ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
 
-        String advices = resumeAdviceService.adviseOnResume(userMessage, resumeProfile, jobSearched);
+        String advices = resumeAdviceService.adviseOnResume(userMessage, resumeProfile, jobSearched, summary);
         ChatResponse response = new ChatResponse();
         response.setMessage(advices);
         return response;
     }
 
-    public ChatResponse getGeneralResponse(String userMessage) {
+    public ChatResponse getGeneralResponse(String userMessage, String jobId, String summary) {
         ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
+        JobSearched jobSearched = jobId != null && !jobId.isBlank() ? jobSearchedService.getById(jobId) : null;
 
-        String generalResponse = generalService.askGeneralQuestion(userMessage, resumeProfile);
+        String generalResponse = generalService.askGeneralQuestion(userMessage, resumeProfile, jobSearched, summary);
         ChatResponse response = new ChatResponse();
         response.setMessage(generalResponse);
         return response;
@@ -114,5 +141,9 @@ public class ChatService {
         User user = userService.getAuthUser();
         JobSearched jobSearched = jobSearchedService.getById(jobId);
         return interviewService.nextInterviewStep(jobSearched, history, user.getId());
+    }
+
+    private boolean shouldSummarize(Conversation conversation) {
+        return conversation.getMessages().size() % 5 == 0;
     }
 }
