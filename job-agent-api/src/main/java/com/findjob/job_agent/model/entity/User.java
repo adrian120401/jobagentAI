@@ -23,6 +23,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String cv_path;
+    private String docx_path;
     private ResumeProfile resumeProfile;
     private String role;
 
@@ -47,23 +48,4 @@ public class User implements UserDetails {
         return email;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

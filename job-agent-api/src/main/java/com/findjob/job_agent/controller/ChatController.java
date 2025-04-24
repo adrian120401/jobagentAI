@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Validated
 @RestController
 @RequestMapping("/chats")
@@ -20,7 +22,7 @@ public class ChatController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ChatResponse> test(@RequestBody ChatRequest request) {
+    public ResponseEntity<ChatResponse> process(@RequestBody ChatRequest request) throws IOException {
         ChatResponse response = service.process(request.getMessage(), request.getJobId());
         return ResponseEntity.ok(response);
     }

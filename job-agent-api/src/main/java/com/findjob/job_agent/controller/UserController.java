@@ -49,4 +49,13 @@ public class UserController {
         response.put("message", "CV uploaded successfully");
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/docx")
+    public ResponseEntity<Map<String, String>> uploadDocx(@RequestParam("file") MultipartFile file) throws IOException {
+        userService.uploadDocx(file);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "DOCX uploaded successfully");
+        return ResponseEntity.ok(response);
+    }
 }

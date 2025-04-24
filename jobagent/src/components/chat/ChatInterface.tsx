@@ -7,6 +7,7 @@ import InputForm from './InputForm';
 import { BotMessageSquare } from 'lucide-react';
 import { Navbar } from '../navbar/Navbar';
 import { useUser } from '@/context/UserContext';
+import DocumentCard from '@/components/DocumentCard';
 export type MessageContent = string | IJob[];
 
 export interface Message {
@@ -41,6 +42,13 @@ const ChatInterface = ({ messages, onSendMessage, isLoadingMessage }: ChatInterf
 
     const renderMessageContent = (content: MessageContent) => {
         if (typeof content === 'string') {
+            const trimmed = content.trim();
+            const isFileLink =
+                (trimmed.startsWith('http://') || trimmed.startsWith('https://')) &&
+                (trimmed.toLowerCase().endsWith('.pdf') || trimmed.toLowerCase().endsWith('.docx'));
+            if (isFileLink) {
+                return <DocumentCard fileUrl={trimmed} />;
+            }
             return (
                 <div
                     className="chat-content flex flex-col gap-2"

@@ -37,6 +37,9 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+	implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

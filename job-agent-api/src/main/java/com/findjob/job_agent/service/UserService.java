@@ -11,10 +11,6 @@ import com.findjob.job_agent.model.entity.User;
 import com.findjob.job_agent.model.mapper.UserMapper;
 import com.findjob.job_agent.repository.UserRepository;
 import com.findjob.job_agent.security.JwtService;
-import com.findjob.job_agent.service.AI.CVAnalyzeService;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,21 +26,20 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-
+    private final FileService fileService;
     private final CloudinaryService cloudinaryService;
-    private final CVAnalyzeService cvAnalyzeService;
 
     public UserService(
             UserRepository repository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            CloudinaryService cloudinaryService,
-            CVAnalyzeService cvAnalyzeService) {
+            FileService fileService,
+            CloudinaryService cloudinaryService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.fileService = fileService;
         this.cloudinaryService = cloudinaryService;
-        this.cvAnalyzeService = cvAnalyzeService;
     }
 
     public UserResponseDTO register(UserRequestDTO userRequestDTO) {
@@ -79,46 +74,37 @@ public class UserService {
     }
 
     public User getFirstUser() {
-        return repository.findAll().get(0);
+        return repository.findAll().getFirst();
     }
 
     public void uploadCv(MultipartFile cv) throws IOException {
         User user = getAuthUser();
-        Map<String, String> result = cloudinaryService.uploadFile(cv);
-        ResumeProfile resumeProfile = readCV(cv.getBytes());
-        user.setCv_path(result.get("url"));
+        String cvPath = uploadFile(cv.getBytes(), cv.getOriginalFilename());
+        ResumeProfile resumeProfile = fileService.readCV(cv.getBytes());
+        user.setCv_path(cvPath);
         user.setResumeProfile(resumeProfile);
         repository.save(user);
     }
 
-    public ResumeProfile readCV(byte[] file) {
-        try (PDDocument document = Loader.loadPDF(file)) {
-            PDFTextStripper textStripper = new PDFTextStripper();
-
-            String rawText = textStripper.getText(document);
-            document.close();
-
-            String sanitizedText = sanitizeText(rawText);
-
-            String response = cvAnalyzeService.analyzeCV(sanitizedText);
-
-            if (response == null) {
-                throw new Exception("Error analyzing cv");
-            }
-
-            return ResumeProfile.parseResumeResponse(response);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error processing PDF");
-        }
+    public void uploadDocx(MultipartFile docx) throws IOException {
+        User user = getAuthUser();
+        String docxPath = uploadFile(docx.getBytes(), docx.getOriginalFilename());
+        user.setDocx_path(docxPath);
+        repository.save(user);
     }
 
-    public String sanitizeText(String rawText) {
-        return rawText
-                .replaceAll("\\r?\\n", "\\\\n")
-                .replaceAll("\\s{2,}", " ")
-                .replaceAll("•", "-")
-                .replaceAll("–", "-")
-                .trim();
+
+    public String uploadFile(byte[] file, String originalFilename) throws IOException {
+        Map<String, String> result = cloudinaryService.uploadFile(file, originalFilename);
+        return result.get("url");
+    }
+
+    public byte[] getDocx() throws IOException {
+        User user = getAuthUser();
+        String docxPath = user.getDocx_path();
+        if (docxPath == null) {
+            throw new NotFoundException("Docx not found");
+        }
+        return cloudinaryService.downloadFile(docxPath);
     }
 }

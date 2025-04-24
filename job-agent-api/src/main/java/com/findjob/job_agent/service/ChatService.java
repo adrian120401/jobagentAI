@@ -14,6 +14,7 @@ import com.findjob.job_agent.model.entity.User;
 import com.findjob.job_agent.service.AI.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -28,6 +29,7 @@ public class ChatService {
     private final InterviewServiceAI interviewService;
     private final ConversationService conversationService;
     private final SummaryServiceAI summaryService;
+    private final FileService fileService;
 
     public ChatService(
             MatchUserService matchUserService,
@@ -39,7 +41,8 @@ public class ChatService {
             GeneralService generalService,
             InterviewServiceAI interviewService,
             ConversationService conversationService,
-            SummaryServiceAI summaryService) {
+            SummaryServiceAI summaryService,
+            FileService fileService) {
         this.matchUserService = matchUserService;
         this.userService = userService;
         this.jobSearchedService = jobSearchedService;
@@ -50,9 +53,10 @@ public class ChatService {
         this.interviewService = interviewService;
         this.conversationService = conversationService;
         this.summaryService = summaryService;
+        this.fileService = fileService;
     }
 
-    public ChatResponse process(String userMessage, String jobId) {
+    public ChatResponse process(String userMessage, String jobId) throws IOException {
         if (jobId != null) {
             userMessage = userMessage.concat(" jobId: " + jobId);
         }
@@ -63,10 +67,12 @@ public class ChatService {
             conversation.getMessages().add(new Message(userMessage, Sender.USER));
         }
 
+        System.out.println("Intent: " + intent);
         ChatResponse response = switch (intent) {
             case JOB_LISTING -> getJobs();
             case JOB_DETAIL -> getJobDetail(userMessage, jobId, conversation.getSummary());
-            case CV_ADVICE -> getResumeAdvice(userMessage, jobId, conversation.getSummary());
+            case RESUME_ADVICE -> getResumeAdvice(userMessage, jobId, conversation.getSummary());
+            case MODIFY_RESUME -> getCVModification(userMessage, jobId, conversation.getSummary());
             case GENERAL -> getGeneralResponse(userMessage, jobId, conversation.getSummary());
         };
 
@@ -124,6 +130,17 @@ public class ChatService {
         String advices = resumeAdviceService.adviseOnResume(userMessage, resumeProfile, jobSearched, summary);
         ChatResponse response = new ChatResponse();
         response.setMessage(advices);
+        return response;
+    }
+
+    public ChatResponse getCVModification(String userMessage, String jobId, String summary) throws IOException {
+        JobSearched jobSearched = jobId != null && !jobId.isBlank() ? jobSearchedService.getById(jobId) : null;
+        ResumeProfile resumeProfile = userService.getAuthUser().getResumeProfile();
+        byte[] docx = userService.getDocx();
+        byte[] newCV = fileService.modifyCV(docx, userMessage, resumeProfile, jobSearched, summary);
+        String newCvPath = userService.uploadFile(newCV, "newCV.docx");
+        ChatResponse response = new ChatResponse();
+        response.setMessage(newCvPath);
         return response;
     }
 
