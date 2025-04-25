@@ -43,19 +43,19 @@ public class UserController {
 
     @PostMapping("/cv")
     public ResponseEntity<Map<String, String>> uploadCv(@RequestParam("file") MultipartFile file) throws IOException {
-        userService.uploadCv(file);
+        String url = userService.uploadCv(file);
 
         Map<String, String> response = new HashMap<>();
-        response.put("message", "CV uploaded successfully");
+        response.put("url", url);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/docx")
     public ResponseEntity<Map<String, String>> uploadDocx(@RequestParam("file") MultipartFile file) throws IOException {
-        userService.uploadDocx(file);
+        String url = userService.uploadDocx(file);
 
         Map<String, String> response = new HashMap<>();
-        response.put("message", "DOCX uploaded successfully");
+        response.put("url", url);
         return ResponseEntity.ok(response);
     }
 }

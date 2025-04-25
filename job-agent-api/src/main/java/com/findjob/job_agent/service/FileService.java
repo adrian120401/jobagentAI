@@ -16,6 +16,10 @@ import com.findjob.job_agent.service.AI.ModifyCVServiceAI;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+
 import java.io.ByteArrayInputStream;
 
 @Service
@@ -95,12 +99,9 @@ public class FileService {
                         if (text != null) {
                             String modifiedText = text;
                             for (Map<String, String> replacement : replacements) {
-                                System.out.println("oldText: " + replacement.get("oldText"));
-                                System.out.println("newText: " + replacement.get("newText"));
                                 String oldText = replacement.get("oldText");
                                 String newText = replacement.get("newText");
                                 if (oldText != null && newText != null) {
-                                    System.out.println("Modifying text: " + modifiedText);
                                     modifiedText = modifiedText.replace(oldText, newText);
                                 }
                             }
@@ -126,6 +127,15 @@ public class FileService {
         for (XWPFParagraph paragraph : document.getParagraphs()) {
             sb.append(paragraph.getText()).append("\n");
         }
+
+        for (XWPFTable table : document.getTables()) {
+            for (XWPFTableRow row : table.getRows()) {
+                for (XWPFTableCell cell : row.getTableCells()) {
+                    sb.append(cell.getText()).append("\n");
+                }
+            }
+        }
+        
         return sb.toString();
     }
 }

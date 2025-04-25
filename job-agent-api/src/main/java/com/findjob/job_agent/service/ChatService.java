@@ -67,7 +67,6 @@ public class ChatService {
             conversation.getMessages().add(new Message(userMessage, Sender.USER));
         }
 
-        System.out.println("Intent: " + intent);
         ChatResponse response = switch (intent) {
             case JOB_LISTING -> getJobs();
             case JOB_DETAIL -> getJobDetail(userMessage, jobId, conversation.getSummary());

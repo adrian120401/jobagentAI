@@ -4,6 +4,8 @@ import { Message, MessageContent } from './components/chat/ChatInterface';
 import { IJobResponse } from './types/IJob';
 import { getMessage } from './api/chat';
 import { useJob } from './context/JobContext';
+import { useError } from './context/ErrorContext';
+import ErrorDialog from './components/menu/ErrorDialog';
 
 function App() {
     const [isLoadingMessage, setIsLoadingMessage] = useState(false);
@@ -15,6 +17,7 @@ function App() {
         },
     ]);
     const { jobSelected } = useJob();
+    const { setError } = useError();
 
     const handleSendMessage = async (message: string) => {
         if (!message.trim()) return;
@@ -44,6 +47,7 @@ function App() {
             setMessages((prev) => [...prev, botResponse]);
         } catch (error) {
             console.error('Error al obtener la respuesta:', error);
+            setError(true);
         } finally {
             setIsLoadingMessage(false);
         }
@@ -56,6 +60,7 @@ function App() {
                 onSendMessage={handleSendMessage}
                 isLoadingMessage={isLoadingMessage}
             />
+            <ErrorDialog />
         </div>
     );
 }

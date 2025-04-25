@@ -12,5 +12,6 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private String cv_path;
+    private String docx_path;
     private ResumeProfile resumeProfile;
 }

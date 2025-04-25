@@ -3,6 +3,7 @@ import { IUser } from '@/types/IUser';
 
 interface UserContextType {
     user: IUser | null;
+    setUser: (user: IUser) => void;
     isAuthenticated: boolean;
     token: string | null;
     login: (token: string, user: IUser) => void;
@@ -46,6 +47,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     const value = {
         user,
+        setUser,
         isAuthenticated,
         token,
         login,

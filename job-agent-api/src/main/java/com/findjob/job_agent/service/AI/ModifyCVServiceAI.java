@@ -52,10 +52,23 @@ public class ModifyCVServiceAI {
             String aiResponse = completions.getChoices().getFirst().getMessage().getContent().trim();
 
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(aiResponse, new TypeReference<List<Map<String, String>>>() {
+
+            System.out.println(aiResponse);
+            return mapper.readValue(extractArrayJson(aiResponse), new TypeReference<List<Map<String, String>>>() {
             });
         } catch (Exception e) {
             throw new RuntimeException("Error getting CV modifications from AI", e);
         }
+    }
+
+    public String extractArrayJson(String response) {
+        int startIndex = response.indexOf("[");
+        int endIndex = response.lastIndexOf("]");
+
+        if (startIndex != -1 && endIndex != -1 && startIndex < endIndex) {
+            return response.substring(startIndex, endIndex + 1);
+        }
+
+        return null;
     }
 }
