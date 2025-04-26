@@ -2,12 +2,11 @@ package com.findjob.job_agent.service;
 
 import com.findjob.job_agent.exception.NotFoundException;
 import com.findjob.job_agent.exception.UnauthorizedException;
-import com.findjob.job_agent.model.dto.LoginRequestDTO;
-import com.findjob.job_agent.model.dto.LoginResponseDTO;
-import com.findjob.job_agent.model.dto.ResumeProfile;
-import com.findjob.job_agent.model.dto.UserRequestDTO;
-import com.findjob.job_agent.model.dto.UserResponseDTO;
+import com.findjob.job_agent.model.dto.*;
+import com.findjob.job_agent.model.entity.Interview;
+import com.findjob.job_agent.model.entity.JobSearched;
 import com.findjob.job_agent.model.entity.User;
+import com.findjob.job_agent.model.mapper.InterviewMapper;
 import com.findjob.job_agent.model.mapper.UserMapper;
 import com.findjob.job_agent.repository.UserRepository;
 import com.findjob.job_agent.security.JwtService;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,18 +28,24 @@ public class UserService {
     private final JwtService jwtService;
     private final FileService fileService;
     private final CloudinaryService cloudinaryService;
+    private final InterviewService interviewService;
+    private final JobSearchedService jobSearchedService;
 
     public UserService(
             UserRepository repository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
             FileService fileService,
-            CloudinaryService cloudinaryService) {
+            CloudinaryService cloudinaryService,
+            InterviewService interviewService,
+            JobSearchedService jobSearchedService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.fileService = fileService;
         this.cloudinaryService = cloudinaryService;
+        this.interviewService = interviewService;
+        this.jobSearchedService = jobSearchedService;
     }
 
     public UserResponseDTO register(UserRequestDTO userRequestDTO) {
@@ -108,5 +114,14 @@ public class UserService {
             throw new NotFoundException("Docx not found");
         }
         return cloudinaryService.downloadFile(docxPath);
+    }
+
+    public List<InterviewResponseDTO> getInterviewsByAuthUser() {
+        User user = getAuthUser();
+        List<Interview> interviews = interviewService.findByUserId(user.getId());
+        return interviews.stream().map(interview -> {
+            JobSearched jobSearched = jobSearchedService.getById(interview.getJobId());
+            return InterviewMapper.toInterviewResponseDTO(interview, jobSearched);
+        }).toList();
     }
 }

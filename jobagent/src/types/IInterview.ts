@@ -1,3 +1,5 @@
+import { IJobDetail } from "./IJob";
+
 export interface IInterview {
     question: string;
     answer?: string;
@@ -10,4 +12,8 @@ export interface IInterviewResume {
     id: string;
     score: number;
     feedback: string;
+}
+
+export interface IInterviewResumeDetail extends IInterviewResume {
+    job: IJobDetail;
 }

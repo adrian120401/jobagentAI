@@ -12,6 +12,7 @@ import { X } from 'lucide-react';
 import InterviewMenu from '../InterviewMenu';
 import { IInterviewResume } from '@/types/IInterview';
 import InterviewResume from '../menu/InterviewResume';
+import InterviewHistory from '../menu/InterviewHistory';
 
 export const Navbar = () => {
     const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false);
@@ -20,6 +21,7 @@ export const Navbar = () => {
     const [isInterviewMenuOpen, setIsInterviewMenuOpen] = useState(false);
     const [interviewResume, setInterviewResume] = useState<IInterviewResume | null>(null);
     const [interviewResumeOpen, setInterviewResumeOpen] = useState(false);
+    const [isInterviewHistoryOpen, setIsInterviewHistoryOpen] = useState(false);
 
     const { isAuthenticated, user, logout } = useUser();
     const { jobSelected, setJobSelected } = useJob();
@@ -91,6 +93,7 @@ export const Navbar = () => {
                             setIsMenuOpen={setIsMenuOpen}
                             logout={logout}
                             setIsUserMenuOpen={setIsUserMenuOpen}
+                            setIsInterviewHistoryOpen={setIsInterviewHistoryOpen}
                         />
                     )}
                     <UserMenu isOpen={isUserMenuOpen} setIsOpen={setIsUserMenuOpen} />
@@ -107,6 +110,10 @@ export const Navbar = () => {
                 isOpen={interviewResumeOpen}
                 onClose={() => setInterviewResumeOpen(false)}
                 interviewResume={interviewResume}
+            />
+            <InterviewHistory
+                isOpen={isInterviewHistoryOpen}
+                setIsOpen={setIsInterviewHistoryOpen}
             />
         </header>
     );

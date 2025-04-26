@@ -1,18 +1,17 @@
 package com.findjob.job_agent.controller;
 
-import com.findjob.job_agent.model.dto.LoginRequestDTO;
-import com.findjob.job_agent.model.dto.LoginResponseDTO;
+import com.findjob.job_agent.model.dto.*;
+import com.findjob.job_agent.model.entity.Interview;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.findjob.job_agent.model.dto.UserRequestDTO;
-import com.findjob.job_agent.model.dto.UserResponseDTO;
 import com.findjob.job_agent.service.UserService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Validated
@@ -57,5 +56,11 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
         response.put("url", url);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/interviews")
+    public ResponseEntity<List<InterviewResponseDTO>> getInterviewResponseDTOs() {
+        List<InterviewResponseDTO> interviews = userService.getInterviewsByAuthUser();
+        return ResponseEntity.ok(interviews);
     }
 }
