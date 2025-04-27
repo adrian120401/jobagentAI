@@ -13,9 +13,10 @@ import InterviewMenu from '../InterviewMenu';
 import { IInterviewResume } from '@/types/IInterview';
 import InterviewResume from '../menu/InterviewResume';
 import InterviewHistory from '../menu/InterviewHistory';
-
+import { RegisterMenu } from '../menu/RegisterMenu';
 export const Navbar = () => {
     const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false);
+    const [isRegisterMenuOpen, setIsRegisterMenuOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isInterviewMenuOpen, setIsInterviewMenuOpen] = useState(false);
@@ -97,7 +98,16 @@ export const Navbar = () => {
                         />
                     )}
                     <UserMenu isOpen={isUserMenuOpen} setIsOpen={setIsUserMenuOpen} />
-                    <LoginMenu isOpen={isLoginMenuOpen} setIsOpen={setIsLoginMenuOpen} />
+                    <LoginMenu
+                        isOpen={isLoginMenuOpen}
+                        setIsOpen={setIsLoginMenuOpen}
+                        openRegister={() => setIsRegisterMenuOpen(true)}
+                    />
+                    <RegisterMenu
+                        isOpen={isRegisterMenuOpen}
+                        setIsOpen={setIsRegisterMenuOpen}
+                        openLogin={() => setIsLoginMenuOpen(true)}
+                    />
                 </div>
             </div>
             <InterviewMenu

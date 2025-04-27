@@ -17,7 +17,6 @@ services:
       - MAIL_PASSWORD=${MAIL_PASSWORD}
     depends_on:
       - mongodb
-      - mysql
     networks:
       - jobagent-network
 
@@ -31,25 +30,9 @@ services:
     networks:
       - jobagent-network
 
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=jobagent
-      - MYSQL_USER=jobagent
-      - MYSQL_PASSWORD=jobagent
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - jobagent-network
-
 networks:
   jobagent-network:
     driver: bridge
 
 volumes:
   mongodb_data:
-  mysql_data:
