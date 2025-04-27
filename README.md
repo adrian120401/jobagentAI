@@ -67,8 +67,11 @@ This diagram illustrates the core components and their interactions within the s
 - Node.js (v18+ recommended)
 - Java 21
 - MongoDB instance (local or remote)
+- Docker and Docker Compose (optional, for containerized deployment)
 
 ### 1. Backend (Spring Boot API)
+
+#### Option A: Running directly with Gradle
 
 ```bash
 cd job-agent-api
@@ -77,7 +80,22 @@ cd job-agent-api
 ```
 
 - The backend will start on [http://localhost:8080](http://localhost:8080) by default.
-- Configure your MongoDB and Azure OpenAI credentials in the appropriate config files or environment variables.
+- Configure your MongoDB and Azure OpenAI credentials in the appropriate config files or environment variables (see .env.example for reference).
+
+#### Option B: Running with Docker Compose
+
+```bash
+cd job-agent-api
+
+cp .env.example .env
+
+nano .env 
+docker-compose up -d
+```
+
+- This will start the Spring Boot application along with MongoDB instances.
+- The backend will be available at [http://localhost:8080](http://localhost:8080).
+- All required services will be containerized and networked together.
 
 ### 2. Frontend (React App)
 
