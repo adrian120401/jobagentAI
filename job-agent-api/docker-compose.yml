@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: job-agent-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/jobagent
+      - SPRING_PROFILES_ACTIVE=docker
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    depends_on:
+      - mongodb
+      - mysql
+    networks:
+      - jobagent-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - jobagent-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=jobagent
+      - MYSQL_USER=jobagent
+      - MYSQL_PASSWORD=jobagent
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - jobagent-network
+
+networks:
+  jobagent-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  mysql_data:
