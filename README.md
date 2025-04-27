@@ -41,6 +41,16 @@ The system is composed of:
 
 ---
 
+## Architecture (High Level)
+
+Below is a high-level overview of the Job Agent system architecture:
+
+![Job Agent Architecture](./jobagent-ai-architecture.png)
+
+This diagram illustrates the core components and their interactions within the system, showing how user requests flow through the application from the frontend interface to backend services and external APIs.
+
+---
+
 ## Features
 - Conversational job search and recommendations
 - Resume/CV analysis and personalized advice
